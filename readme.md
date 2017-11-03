@@ -9,6 +9,6 @@ PcircRNA_finder: a software for circRNA prediction in plants
 	(3) Filter: Filter is used to prioritize the above candidate circRNA. It has two parts: filtering the candidate circRNAs with two kinds of splicing signal, namely U2 based spliceosome (usually with consensus sequence GT-AG and GC-AG ) and U12 based minor spliceosome (usually with consensus sequence AT-AC) (Reddy, et al., 2013; Staiger and Brown, 2013); creating a pseudoRef with chiastic backsplice site flanking sequences and then mapping raw reads to it to check the back-splice sites.
 
 
-# Reference
+# Please cite
 Chen et al., PcircRNA-finder: a program to identify circular RNAs in plants. Bioinformatics. 2016
 https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btw496
