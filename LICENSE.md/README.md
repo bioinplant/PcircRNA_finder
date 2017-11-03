@@ -35,44 +35,44 @@ http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
 12. bowtie1
 http://bowtie-bio.sourceforge.net/index.shtml
 
-Running step
-1. Running STAR to get "stiChimeric.out.junction" file, example command below:
-STAR --runMode genomeGenerate --genomeDir /home3/cl/at_sti_15x/STAR_index --genomeFastaFiles Athaliana_167.fa  --runThreadN 8
+        Running step
+        1. Running STAR to get "stiChimeric.out.junction" file, example command below:
+        STAR --runMode genomeGenerate --genomeDir /home3/cl/at_sti_15x/STAR_index --genomeFastaFiles Athaliana_167.fa  --runThreadN 8
 
-STAR --genomeDir  /home3/cl/at_sti_15x/STAR_index  --readFilesIn ../left.fastq  ../right.fastq --runThreadN 8 --sjdbGTFfile /home1/cl/ok/TAIR10_GFF3_genes.gtf  --chimSegmentMin 20 --chimScoreMin 1 --alignIntronMax 100000 --outFilterMismatchNmax 4 --alignTranscriptsPerReadNmax 100000 --outFilterMultimapNmax 2 --outFileNamePrefix   sti  --outSAMtype BAM SortedByCoordinate
+        STAR --genomeDir  /home3/cl/at_sti_15x/STAR_index  --readFilesIn ../left.fastq  ../right.fastq --runThreadN 8 --sjdbGTFfile /home1/cl/ok/TAIR10_GFF3_genes.gtf  --chimSegmentMin 20 --chimScoreMin 1 --alignIntronMax 100000 --outFilterMismatchNmax 4 --alignTranscriptsPerReadNmax 100000 --outFilterMultimapNmax 2 --outFileNamePrefix   sti  --outSAMtype BAM SortedByCoordinate
 
-2. Running tophat to get " accepted_hits.bam " file, example command below:
-tophat2 -a 6 --microexon-search -m 2 -p 10 -G  $gtf_file   -o ${sample_name}   $genome_bowtie_index $fastq1list  $fastq2list
+        2. Running tophat to get " accepted_hits.bam " file, example command below:
+        tophat2 -a 6 --microexon-search -m 2 -p 10 -G  $gtf_file   -o ${sample_name}   $genome_bowtie_index $fastq1list  $fastq2list
 
-bamToFastq -i   ${sample_name}/unmapped.bam  -fq  ${sample_name}/unmapped.fastq
+        bamToFastq -i   ${sample_name}/unmapped.bam  -fq  ${sample_name}/unmapped.fastq
 
-tophat2 -o   ${sample_name}_fusion -p 15 --fusion-search --keep-fasta-order --bowtie1 --no-coverage-search   $genome_bowtie_index      ${sample_name}/unmapped.fastq
+        tophat2 -o   ${sample_name}_fusion -p 15 --fusion-search --keep-fasta-order --bowtie1 --no-coverage-search   $genome_bowtie_index      ${sample_name}/unmapped.fastq
 
-3. Running find_circ to get " find_circ_circRNA.bed" file, example command below:
-$bowtie2_path  -p16 --very-sensitive --mm -M20 --score-min=C,-15,0 -x  $genome_index  -q  -U  $fastq_file   2> ${name}_bt2_firstpass.log | $samtools_path  view -hbuS - | $samtools_path  sort -  $name
+        3. Running find_circ to get " find_circ_circRNA.bed" file, example command below:
+        $bowtie2_path  -p16 --very-sensitive --mm -M20 --score-min=C,-15,0 -x  $genome_index  -q  -U  $fastq_file   2> ${name}_bt2_firstpass.log | $samtools_path  view -hbuS - | $samtools_path  sort -  $name
 
-$samtools_path   view -hf 4  ${name}.bam | $samtools_path  view -Sb - > unmapped_${name}.bam
+        $samtools_path   view -hf 4  ${name}.bam | $samtools_path  view -Sb - > unmapped_${name}.bam
 
-python  $find_circRNA_path/unmapped2anchors.py   unmapped_${name}.bam  > unmapped_${name}_anchors.qfa
+        python  $find_circRNA_path/unmapped2anchors.py   unmapped_${name}.bam  > unmapped_${name}_anchors.qfa
 
-$bowtie2_path  --reorder --mm -M20 --score-min=C,-15,0 -q -x  $genome_index  -U unmapped_${name}_anchors.qfa  2> bt2_secondpass_test.log | python  $find_circRNA_path/find_circ.py -r $sample_description_file  -G $chr_dir -p $prefix -s test_out_$name/sites.log > test_out_$name/sites.bed 2> test_out_$name/sites.reads
+        $bowtie2_path  --reorder --mm -M20 --score-min=C,-15,0 -q -x  $genome_index  -U unmapped_${name}_anchors.qfa  2> bt2_secondpass_test.log | python  $find_circRNA_path/find_circ.py -r $sample_description_file  -G $chr_dir -p $prefix -s test_out_$name/sites.log > test_out_$name/sites.bed 2> test_out_$name/sites.reads
 
-grep  _circ_   sites.bed    > find_circ_circRNA.bed
+        grep  _circ_   sites.bed    > find_circ_circRNA.bed
 
-4. Running mapsplice to get " fusions_raw.txt " file, example command below:
-python  /datacenter/disk3/cl/mapsplice/MapSplice-v2.1.8/mapsplice.py   -p 10  --non-canonical  --fusion-non-canonical   --min-fusion-distance  200  -c  /datacenter/disk1/cl/data/at/chr    -x  /home1/cl/ok/Athaliana_167.fa   --gene-gtf  /home1/cl/ok/TAIR10_GFF3_genes.gtf     -1  ../left.fastq      -2    ../right.fastq    --qual-scale  phred33   -o      circ  
+        4. Running mapsplice to get " fusions_raw.txt " file, example command below:
+        python  /datacenter/disk3/cl/mapsplice/MapSplice-v2.1.8/mapsplice.py   -p 10  --non-canonical  --fusion-non-canonical   --min-fusion-distance  200  -c  /datacenter/disk1/cl/data/at/chr    -x  /home1/cl/ok/Athaliana_167.fa   --gene-gtf  /home1/cl/ok/TAIR10_GFF3_genes.gtf     -1  ../left.fastq      -2    ../right.fastq    --qual-scale  phred33   -o      circ  
 
-5. Running segemehl to get " splicesites.bed" file, example command below:
-$segemehl_path/segemehl.x -t 8 -s -d $genome_fasta -i $genome_segemehl_index  -q $fastq1_file   -p $fastq2_file -o ${name_1}.sam -u ${name_1}.fq -S -T -D 2
+        5. Running segemehl to get " splicesites.bed" file, example command below:
+        $segemehl_path/segemehl.x -t 8 -s -d $genome_fasta -i $genome_segemehl_index  -q $fastq1_file   -p $fastq2_file -o ${name_1}.sam -u ${name_1}.fq -S -T -D 2
 
-samtools view -hbuS   ${name_1}.sam | samtools sort - ${name_1}.sorted
+        samtools view -hbuS   ${name_1}.sam | samtools sort - ${name_1}.sorted
 
-samtools view -h ${name_1}.sorted.bam | gzip -c > ${name_1}.sorted.sam.gz
+        samtools view -h ${name_1}.sorted.bam | gzip -c > ${name_1}.sorted.sam.gz
 
-$segemehl_path/testrealign.x -d $genome_fasta  -q   ${name_1}.sorted.sam.gz -U ${name_1}.splitmap.txt -T ${name_1}.transmap.txt -n
+        $segemehl_path/testrealign.x -d $genome_fasta  -q   ${name_1}.sorted.sam.gz -U ${name_1}.splitmap.txt -T ${name_1}.transmap.txt -n
 
-6. Running PcircRNA_finder to get final results, example command below:
-perl ecircRNA_finder.pl /home3/cl/at_sti_15x/re_run1/1/1/stiChimeric.out.junction  /home3/cl/at_sti_15x/re_run1/1/1/sti_fusion/accepted_hits.bam /home3/cl/at_sti_15x/re_run1/1/1/test_out_sti/find_circ_circRNA.bed  /home3/cl/at_sti_15x/re_run1/1/1/circ/fusions_raw.txt  /home3/cl/at_sti_15x/re_run1/1/1/splicesites.bed   20000  /home3/cl/at_sti_15x/re_run1/1/1/at.txt 5 5  /home1/cl/ok/Athaliana_167.fa  100  1  left.fastq right.fastq  1
+        6. Running PcircRNA_finder to get final results, example command below:
+        perl ecircRNA_finder.pl /home3/cl/at_sti_15x/re_run1/1/1/stiChimeric.out.junction  /home3/cl/at_sti_15x/re_run1/1/1/sti_fusion/accepted_hits.bam /home3/cl/at_sti_15x/re_run1/1/1/test_out_sti/find_circ_circRNA.bed  /home3/cl/at_sti_15x/re_run1/1/1/circ/fusions_raw.txt  /home3/cl/at_sti_15x/re_run1/1/1/splicesites.bed   20000  /home3/cl/at_sti_15x/re_run1/1/1/at.txt 5 5  /home1/cl/ok/Athaliana_167.fa  100  1  left.fastq right.fastq  1
 
 
 Output files
