@@ -11,4 +11,4 @@ PcircRNA_finder: a software for circRNA prediction in plants
 
 # Reference
 Chen et al., PcircRNA-finder: a program to identify circular RNAs in plants. Bioinformatics. 2016
-Full text: https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btw496
+https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btw496
